@@ -1,0 +1,43 @@
+/* About Page Styles */
+.about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+.about-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.about-content {
+  font-size: 16px;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  text-align: justify;
+}
+.about-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.info-card {
+  flex: 1;
+  min-width: 250px;
+  padding: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  text-align: center;
+}
+.info-card h3 {
+  font-size: 20px;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+.info-card p {
+  font-size: 14px;
+  color: #4b5563;
+}
