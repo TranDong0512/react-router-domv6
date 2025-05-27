@@ -82,6 +82,7 @@ const useFetch = <T>({ path, method, body, config }: FetchParams) => {
       dispatch({ type: "loading", error: undefined });
       try {
         const { data } = await fetch<T>(path, method, body, config);
+
         if (shouldCancel) return;
         dispatch({ type: "success", data });
 

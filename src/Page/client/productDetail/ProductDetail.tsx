@@ -48,9 +48,6 @@ const linkStyles: React.CSSProperties = {
 
 
 const ProductDetail = () => {
-
-
-
     return (
         <div style={containerStyles}>
             {/* <h1 style={styles}>{product.name}</h1>

@@ -2,7 +2,7 @@ import React from 'react';
 import './Products.css';
 import useFetch from '../../../hook/api/useFetch';
 import useQueryParam from '../../../hook/search/useQueryParam';
-import useDebounce from '../../../hook/utils/useDebounce';
+// import useDebounce from '../../../hook/utils/useDebounce';
 
 export interface IProduct {
     id: number;
@@ -11,10 +11,7 @@ export interface IProduct {
     price: number;
     createdAt: Date
 }
-interface ProductsResponse {
-    products: IProduct[];
-    total: number;
-}
+
 const styles: React.CSSProperties = {
     fontSize: '1.5rem',
     fontWeight: 'bold',
@@ -24,47 +21,32 @@ const styles: React.CSSProperties = {
 };
 const path = '/products'
 function Products() {
-    // Đây là sử dụng useQueryParam để lấy các query params từ URL
+
     const { getQueryParamByKey, setQueryParam } = useQueryParam()
-    // Các state page, limit, order, inputValue mục đích là để hiển thị lên giao diện người dùng và cập nhật URL 
     const [page, setPage] = React.useState<number>(parseInt(getQueryParamByKey('page=') || '1'));
-    const [limit, setLimit] = React.useState<number>(parseInt(getQueryParamByKey('limit=') || '4'));
-    const [order, setOrder] = React.useState<string>(getQueryParamByKey('order=') || '');
-    const [inputValue, setInputValue] = React.useState<string>(getQueryParamByKey('search?q='));
+    const [limit, setLimit] = React.useState<number>(parseInt(getQueryParamByKey('_limit=') || '4'));
+    const [order, setOrder] = React.useState<string>(getQueryParamByKey('_order=') || '');
+    // const [inputValue, setInputValue] = React.useState<string>(getQueryParamByKey('search?q='));
 
-    // useDebounce là một custom hook để trì hoãn việc cập nhật giá trị inputValue trong 500ms (số s tùy chỉnh)
-    const debouncedInputValue = useDebounce(inputValue, 500);
+    // const debouncedInputValue = useDebounce(inputValue, 500);
 
-    // useFetch là một custom hook để gọi API và lấy dữ liệu từ server
-    // Ở đây mỗi khi anh search hay chọn limit, odder, page thì path sẽ được làm mới
-    // Trong useFetch, tại useEffect sẽ gọi lại api khi patch thay đổi ns vừa rồi đúng không
-    const { state } = useFetch(
+    const { state } = useFetch<IProduct[]>(
         {
-            path: `${path}/search?q=${debouncedInputValue}&limit=${limit}&skip=${(limit * (page - 1))}&sortBy=${order ? "price" : ""}&order=${order}`,
+            path: `${path}?_limit=${limit}&_skip=${(limit * (page - 1))}_sortBy=${order ? "price" : ""}_order=${order}`,
             method: 'GET',
         }
     );
-
-    const data = state.data as ProductsResponse | undefined;
 
     return (
         <div style={{ padding: '20px' }}>
             <h1 style={styles}>Our Products</h1>
             <div className="controls">
-                <input
+                {/* <input
                     type="text"
                     placeholder="Search products..."
                     value={inputValue}
 
-                    // đù bug rồi mé cứu t bug rồi nhìn tái hiện bug này Toản bì đc thì t gửi 
 
-                    // tìm kiếm on change thì anh cập nhật state inputValue,
-                    // cập nhật page về 1 set lại queryParam page=1 và search=q=inputValue
-
-                    // thấy vừa anh xóa search thì nó sẽ xóa luôn queryParam search
-
-                    // ok chưa
-                    // Tương tự các hàm bên dưới
 
                     onChange={(e) => {
                         setInputValue(e.target.value);
@@ -73,12 +55,12 @@ function Products() {
                         setQueryParam('page=', '1');
                         setQueryParam('search/q=', e.target.value);
                     }}
-                />
+                /> */}
                 <select value={limit} onChange={(e) => {
                     setLimit(parseInt(e.target.value));
                     setPage(1);
                     setQueryParam('page=', '1');
-                    setQueryParam('limit=', e.target.value);
+                    setQueryParam('_limit=', e.target.value);
                 }}>
                     <option value={4}>4 / page</option>
                     <option value={8}>8 / page</option>
@@ -88,7 +70,7 @@ function Products() {
                     setOrder(e.target.value);
                     setPage(1);
                     setQueryParam('page=', '1');
-                    setQueryParam('order=', e.target.value);
+                    setQueryParam('_order=', e.target.value);
                 }}>
                     <option value="">Sort By Price</option>
                     <option value="asc">Price: Low → High</option>
@@ -97,16 +79,15 @@ function Products() {
             </div>
 
             <div className="product-grid">
-                {data?.products && data.products.map((product) => (
-                    <div key={product.id} className="product-card">
+                {state.data?.map((product: IProduct) => (
+                    <div className="product-card" key={product.id}>
                         <img src={product.thumbnail} alt={product.title} />
-                        <h2>{product.title}</h2>
-                        <h4>{product.price}</h4>
-                        <p>Created At: {new Date(product.createdAt).toLocaleDateString()}</p>
+                        <h3>{product.title}</h3>
+                        <p>${product.price}</p>
                     </div>
                 ))}
             </div>
-            <div className="pagination">
+            {/* <div className="pagination">
                 <button onClick={() => {
                     setPage(page - 1);
                     setQueryParam('page=', (page - 1).toString());
@@ -125,7 +106,7 @@ function Products() {
                 >
                     Next ➡️
                 </button>
-            </div>
+            </div> */}
         </div>
     );
 };
