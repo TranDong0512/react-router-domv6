@@ -66,7 +66,7 @@ function Products() {
                     <option value={8}>8 / page</option>
                     <option value={12}>12 / page</option>
                 </select>
-                <select value={order} onChange={(e) => {
+                <select value={order} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                     setOrder(e.target.value);
                     setPage(1);
                     setQueryParam('page=', '1');

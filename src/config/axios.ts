@@ -9,6 +9,22 @@ interface FailedRequests {
     error: AxiosError;
 }
 
+// khi call api thì phải truyền token lên header
+// Nếu mà token hết hạn => với các ứng dụng cần bảo mật cao thì nên cho đăng xuất luôn
+// Còn như fb hay mxh, trang bán hàng thì nó làm 1 việc là cấp lại token mới khi token cũ hết hạn làm tăng trải nghiệm
+// Thông qua interceptors.response
+// Nó được phép truy cập vào các req đang được thực thi
+// Các req nào bị fail thì push vào mảng failedRequests
+// Sau đó trước khi thực hiện đến các phương thức như get push ... thì nó sẽ call api refresh token để cập nhật lại token mới
+// Dữ liệu truyền lên là refresh token ( khi login thì api trả về access token và refresh token của người dùng)
+// accsess token và refresh token cơ bản là giống nhau chỉ khác nhau ở thời gian sống ( access thì tầm phút đến tiếng tối 
+// đa 1 ngày còn refresh thì tầm 7 ngày đến 15 ngày )
+// - nếu refresh token hết hạn => logout ( cả 2 token hết hạn )
+// - nếu access token hết hạn => refresh token còn hạn thì khi call lên api /access-token sẽ được trả về access token mới và
+//  refresh token mới
+// Lưu 2 token vào localStorage hoặc cookie
+// có thể không trả về refresh token thì sẽ lưu refresh token của người dùng trên server hoặc trả về thông qua cookies
+
 const axiosInstance = axios.create({
     // Truy suất đến biến môi trường VITE_URL trong file .env thông qua import.meta.env
     baseURL: import.meta.env.VITE_URL,
@@ -43,7 +59,7 @@ axiosInstance.interceptors.response.use(
             });
         }
         isTokenRefreshing = true;
-
+        // apo login của json server auth => access và refresh token
         try {
             const response = await axiosInstance.post("/access-token", {
                 refreshToken: JSON.parse(localStorage.getItem("refreshToken") ?? ""),
